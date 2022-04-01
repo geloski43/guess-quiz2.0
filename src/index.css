@@ -1,0 +1,113 @@
+@font-face {
+  font-family: 'Blockway Pixies Medium';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Blockway Pixies Medium'),
+    url('./assets/fonts/BlockwayPixies-8K2D.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Roboto Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Roboto Regular'),
+    url('./assets/fonts/Roboto-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'GEORGEA Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('GEORGEA Regular'),
+    url('./assets/fonts/GEORGEA.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'BetsyFlanagan-Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('BetsyFlanagan-Regular'),
+    url('./assets/fonts/betsy flanagan.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Digital Numbers Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Digital Numbers Regular'),
+    url('./assets/fonts/DigitalNumbers-Regular.woff') format('woff');
+}
+
+.title-container {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  overflow: hidden;
+  background: url('./assets/images/lines2.png');
+  border-radius: 5px;
+  margin-right: -5px;
+}
+
+.boxed-letters-container {
+  padding: 30px;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  overflow: hidden;
+  background: url('./assets/images/lines2.png');
+  border-radius: 5px;
+}
+
+@media only screen and (max-width: 1000px) {
+  .title-container {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.svg-container {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  place-content: center;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+}
+
+.svg-item {
+  width: 56%;
+  overflow: visible;
+  stroke: rgb(253, 195, 147);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.toast-container {
+  width: 50vh;
+  height: 50vh;
+  border-radius: 20px;
+}
+
+.box {
+  background: white;
+  border-radius: 30px;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: calc(50% - 100px / 2);
+  left: calc(50% - 100px / 2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progress-icon {
+  width: 80%;
+  height: 80%;
+}

@@ -1,24 +1,36 @@
-import { ColorModeScript } from '@chakra-ui/react';
-import React, { StrictMode } from 'react';
+import {
+  ColorModeScript,
+  ChakraProvider,
+  extendTheme,
+  theme as base,
+} from '@chakra-ui/react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
-import * as serviceWorker from './serviceWorker';
+import './index.css';
+import { Provider as ScoreProvider } from './context/ScoreContext';
+import { mode } from '@chakra-ui/theme-tools';
+
+const styles = {
+  global: props => ({
+    body: {
+      bg: mode('#f0e7db', '#202023')(props),
+    },
+  }),
+};
+const theme = extendTheme({
+  fonts: {
+    heading: `Blockway Pixies Medium, ${base.fonts?.heading}`,
+    body: `Roboto Regular, ${base.fonts?.body}`,
+  },
+  styles,
+});
 
 ReactDOM.render(
-  <StrictMode>
-    <ColorModeScript />
-    <App />
-  </StrictMode>,
+  <ChakraProvider theme={theme}>
+    <ScoreProvider>
+      <ColorModeScript />
+      <App />
+    </ScoreProvider>
+  </ChakraProvider>,
   document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://cra.link/PWA
-serviceWorker.unregister();
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
