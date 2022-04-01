@@ -2,8 +2,7 @@ import React, { useRef } from 'react';
 import { Text, useMediaQuery, Center, Wrap, WrapItem } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-const BoxedAlphabets = () => {
-  const alphabets = 'dragmexplyjubtoqwisfhkzcvn'.split('');
+const BoxedAlphabets = ({ boxedLetters, boxedLettersColor }) => {
   const constraintsRef = useRef(null);
   const [isNotFullScreen] = useMediaQuery('(max-width: 1000px)');
 
@@ -11,20 +10,20 @@ const BoxedAlphabets = () => {
     <Center>
       <motion.div className="boxed-letters-container" ref={constraintsRef}>
         <Wrap>
-          {alphabets.map((v, i) => (
+          {boxedLetters.map((v, i) => (
             <motion.div
               whileHover={{ rotate: -180 }}
-              key={v}
+              key={i}
               drag
               dragConstraints={constraintsRef}
             >
               <WrapItem>
                 <Text
-                  fontSize={isNotFullScreen ? '5xl' : '6xl'}
+                  fontSize={isNotFullScreen ? '4xl' : '5xl'}
                   fontFamily={'Blockway Pixies Medium'}
                   cursor={'grab'}
                   fontWeight="thin"
-                  color="orange.400"
+                  color={boxedLettersColor}
                 >
                   {v}
                 </Text>

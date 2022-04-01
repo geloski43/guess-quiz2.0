@@ -13,7 +13,6 @@ import {
   Button,
   InputGroup,
   InputRightElement,
-  useToast,
 } from '@chakra-ui/react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 
@@ -30,7 +29,6 @@ const SaveScoreModal = ({
   background,
   existingPlayerScore,
 }) => {
-  const toast = useToast();
   return (
     <Modal
       initialFocusRef={initialRef}
@@ -48,6 +46,12 @@ const SaveScoreModal = ({
             <FormLabel>Player name</FormLabel>
             <InputGroup>
               <Input
+                isInvalid={
+                  playerName.length < 4 ||
+                  playerName.length > 12 ||
+                  existingPlayerScore
+                }
+                errorBorderColor="red.300"
                 isRequired={true}
                 onChange={e => {
                   setPlayerName(e.target.value);
@@ -80,7 +84,12 @@ const SaveScoreModal = ({
 
         <ModalFooter>
           <Button
-            isDisabled={!playerName || existingPlayerScore}
+            isDisabled={
+              !playerName ||
+              existingPlayerScore ||
+              playerName.length < 4 ||
+              playerName.length > 12
+            }
             onClick={() => {
               handleSaveScore();
               setTimeout(() => {

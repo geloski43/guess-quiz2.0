@@ -32,6 +32,11 @@ const App = () => {
     highScores: false,
     saveScore: false,
   });
+  // animated boxed letters
+  const [boxedLetters, setBoxedLetters] = useState(
+    'Drag the letters and play along!'.split('')
+  );
+  const [boxedLettersColor, setBoxedLettersColor] = useState('orange.400');
 
   //states used for open trivia api
   const [apiVariables, setApiVariables] = useState({
@@ -86,52 +91,63 @@ const App = () => {
       apiVariables.difficulty === 'Any Difficulty'
         ? ''
         : apiVariables.difficulty
-    ).then(res => {
-      console.log('result', res);
-      if (res.data.response_code !== 0) {
-        console.error(
-          'No data was returned, number of questions may be limited for the category and difficulty you selected'
-        );
+    )
+      .then(res => {
+        // console.log('result', res);
+        if (res.data.response_code !== 0) {
+          setBoxedLetters('Error! Try other settings.'.split(''));
+          setBoxedLettersColor('red.500');
+          console.error(
+            'No data was returned, number of questions may be limited for the category and difficulty you selected'
+          );
+          setTimeout(() => {
+            setLoading({ app: false });
+          }, 3000);
+        } else {
+          setQuestions(res.data.results);
+          curentQuestion = decodeQuestion(
+            res.data.results[questionIndex] &&
+              res.data.results[questionIndex].question
+          );
+          currentAnswer = decodeHtml(
+            res.data.results[questionIndex] &&
+              res.data.results[questionIndex].correct_answer
+          );
+          currentCategory =
+            res.data.results[questionIndex] &&
+            res.data.results[questionIndex].category;
+          currentDifficulty =
+            res.data.results[questionIndex] &&
+            res.data.results[questionIndex].difficulty;
+          setCurrent({
+            category: currentCategory,
+            difficulty: currentDifficulty,
+            answer: currentAnswer,
+            question: curentQuestion,
+          });
+          fetchImage(curentQuestion);
+          resetGuessedLetters();
+          setInvalidLetters([]);
+          setTimeout(() => {
+            setLoading({ app: false });
+          }, 3000);
+        }
+      })
+      .catch(err => {
         setTimeout(() => {
           setLoading({ app: false });
         }, 3000);
-      } else {
-        setQuestions(res.data.results);
-        curentQuestion = decodeQuestion(
-          res.data.results[questionIndex] &&
-            res.data.results[questionIndex].question
-        );
-        currentAnswer = decodeHtml(
-          res.data.results[questionIndex] &&
-            res.data.results[questionIndex].correct_answer
-        );
-        currentCategory =
-          res.data.results[questionIndex] &&
-          res.data.results[questionIndex].category;
-        currentDifficulty =
-          res.data.results[questionIndex] &&
-          res.data.results[questionIndex].difficulty;
-        setCurrent({
-          category: currentCategory,
-          difficulty: currentDifficulty,
-          answer: currentAnswer,
-          question: curentQuestion,
-        });
-        fetchImage(curentQuestion);
-        resetGuessedLetters();
-        setInvalidLetters([]);
-        setTimeout(() => {
-          setLoading({ app: false });
-        }, 3000);
-      }
-    });
+        setBoxedLetters('Error! Something went wrong'.split(''));
+        setBoxedLettersColor('red.500');
+        // console.log('fetch question error', err);
+      });
   };
 
   const getScores = () => {
     setLoading({ highScores: true });
     getLeaderBoards()
       .then(res => {
-        console.log('scores response', res.data);
+        // console.log('scores response', res.data);
         setScoreLeaders(res.data);
         setTimeout(() => {
           setLoading({ highScores: false });
@@ -139,7 +155,7 @@ const App = () => {
       })
       .catch(err => {
         setLoading({ highScores: false });
-        console.log(err);
+        // console.log(err);
       });
   };
 
@@ -151,7 +167,7 @@ const App = () => {
     } else {
       getImage(query)
         .then(res => {
-          console.log('image', res.data.images_results);
+          // console.log('image', res.data.images_results);
           setImageHint(
             res.data.images_results[Math.floor((Math.random() * 5) | 0)]
               .thumbnail
@@ -168,7 +184,7 @@ const App = () => {
         .catch(err => {
           getImage2(query)
             .then(res => {
-              console.log('image', res.data.images_results);
+              // console.log('image', res.data.images_results);
               setImageHint(
                 res.data.images_results[Math.floor((Math.random() * 5) | 0)]
                   .thumbnail
@@ -185,9 +201,9 @@ const App = () => {
               setImageHint(
                 'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
               );
-              console.log(err);
+              // console.log(err);
             });
-          console.log(err);
+          // console.log(err);
         });
     }
   };
@@ -261,7 +277,7 @@ const App = () => {
             position: 'top',
             render: () => GameResultToast(100, '', randomFailMessage()),
           });
-          console.log('next question wrong guess');
+          // console.log('next question wrong guess');
           let currentCategory = '';
           let currentAnswer = '';
           let currentQuestion = '';
@@ -403,15 +419,26 @@ const App = () => {
     setLoading({ saveScore: true });
     postLeaderBoard(playerName, playerScore)
       .then(res => {
+        toast({
+          position: 'top-right',
+          title: `Check your name on the leaderboards, good game!`,
+          status: 'success',
+          isClosable: true,
+        });
         // console.log(res);
         setLoading({ saveScore: false });
         scoreContext.clearScore();
         localStorage.setItem('score', JSON.stringify(0));
-        localStorage.setItem(`player ${playerName}`, JSON.stringify(0));
       })
       .catch(err => {
+        toast({
+          position: 'top-right',
+          title: `Something went wrong, try again later.`,
+          status: 'error',
+          isClosable: true,
+        });
         setLoading({ saveScore: false });
-        console.log(err);
+        // console.log(err);
       });
   };
 
@@ -469,7 +496,10 @@ const App = () => {
                 </VStack>
               </Center>
             ) : (
-              <BoxedAlphabets />
+              <BoxedAlphabets
+                boxedLettersColor={boxedLettersColor}
+                boxedLetters={boxedLetters}
+              />
             )}
           </>
         ) : (

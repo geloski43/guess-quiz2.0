@@ -6,7 +6,7 @@ export const getQuestions = async (amount, category, difficulty) =>
       category ? `&category=${category}` : ''
     }${difficulty ? `&difficulty=${difficulty}` : ''}`
   );
-
+//   http://localhost:8000/api/leaderboard
 export const postLeaderBoard = async (name, score) =>
   await axios.post(
     `https://mighty-hamlet-73526.herokuapp.com/api/leaderboard`,
