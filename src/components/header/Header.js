@@ -15,16 +15,16 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { GiPlayButton, GiHamburgerMenu } from 'react-icons/gi';
 import { FiSettings } from 'react-icons/fi';
-import { AiFillTrophy } from 'react-icons/ai';
+import { AiFillTrophy, AiOutlineReload } from 'react-icons/ai';
 import { VscSave } from 'react-icons/vsc';
 import { motion } from 'framer-motion';
 import GameSettingsDrawer from './GameSettingsDrawer';
 import HighScoresDrawer from './HighScoresDrawer';
 import SaveScoreModal from './SaveScoreModal';
+import ResetModal from './ResetModal';
 
 const Header = ({
   loading,
@@ -36,7 +36,8 @@ const Header = ({
   apiVariables,
   setApiVariables,
   scoreLeaders,
-  imageHint,
+  current,
+  resetStates,
 }) => {
   const settingsTabRef = useRef();
   const highScoresTabRef = useRef();
@@ -47,9 +48,14 @@ const Header = ({
     gameSettings: false,
     highScores: false,
   });
-  // for save score modal
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // for save score and reset modal
+  const [modalOpen, setModalOpen] = useState({
+    saveScore: false,
+    resetGame: false,
+  });
 
+  const resetGameInitialRef = useRef();
+  const resetGameFinalRef = useRef();
   const saveScoreInitialRef = useRef();
   const saveScoreFinalRef = useRef();
   const gameSettingsInitialRef = useRef();
@@ -101,17 +107,29 @@ const Header = ({
               variant="outline"
             />
             <MenuList>
-              <MenuItem
-                isDisabled={imageHint}
-                onClick={() => {
-                  fetchQUestions();
-                }}
-                icon={<GiPlayButton />}
-              >
-                <Text fontFamily="GEORGEA Regular" fontSize={'xs'}>
-                  Play
-                </Text>
-              </MenuItem>
+              {!current.answer ? (
+                <MenuItem
+                  onClick={() => {
+                    fetchQUestions();
+                  }}
+                  icon={<GiPlayButton />}
+                >
+                  <Text fontFamily="GEORGEA Regular" fontSize={'xs'}>
+                    Play
+                  </Text>
+                </MenuItem>
+              ) : (
+                <MenuItem
+                  onClick={() => {
+                    setModalOpen({ resetGame: true });
+                  }}
+                  icon={<AiOutlineReload />}
+                >
+                  <Text fontFamily="GEORGEA Regular" fontSize={'xs'}>
+                    Reset
+                  </Text>
+                </MenuItem>
+              )}
               <MenuItem
                 onClick={() => {
                   setDrawerOpen({ gameSettings: true });
@@ -119,7 +137,7 @@ const Header = ({
                 icon={<FiSettings />}
               >
                 <Text fontFamily="GEORGEA Regular" fontSize={'xs'}>
-                  Settings
+                  Settingss
                 </Text>
               </MenuItem>
               <MenuItem
@@ -142,7 +160,9 @@ const Header = ({
               {score > 0 && (
                 <MenuItem
                   ref={saveScoreFinalRef}
-                  onClick={onOpen}
+                  onClick={() => {
+                    setModalOpen({ saveScore: true });
+                  }}
                   icon={
                     loading.saveScore ? (
                       <Spinner size="sm" color="blue.200" />
@@ -161,17 +181,33 @@ const Header = ({
         ) : (
           <Tabs>
             <TabList>
-              <Tab
-                isDisabled={imageHint}
-                onClick={() => {
-                  fetchQUestions();
-                }}
-              >
-                <HStack>
-                  <Text fontFamily="GEORGEA Regular">Play</Text>
-                  <GiPlayButton />
-                </HStack>
-              </Tab>
+              {!current.answer ? (
+                <Tab
+                  onClick={() => {
+                    fetchQUestions();
+                  }}
+                >
+                  <HStack>
+                    <Text fontSize={'small'} fontFamily="GEORGEA Regular">
+                      Play
+                    </Text>
+                    <GiPlayButton />
+                  </HStack>
+                </Tab>
+              ) : (
+                <Tab
+                  onClick={() => {
+                    setModalOpen({ resetGame: true });
+                  }}
+                >
+                  <HStack>
+                    <Text fontSize={'small'} fontFamily="GEORGEA Regular">
+                      Reset
+                    </Text>
+                    <AiOutlineReload />
+                  </HStack>
+                </Tab>
+              )}
               <Tab
                 ref={settingsTabRef}
                 onClick={() => {
@@ -179,7 +215,9 @@ const Header = ({
                 }}
               >
                 <HStack>
-                  <Text fontFamily="GEORGEA Regular">Settings</Text>
+                  <Text fontSize={'small'} fontFamily="GEORGEA Regular">
+                    Settings
+                  </Text>
                   <FiSettings />
                 </HStack>
               </Tab>
@@ -190,7 +228,9 @@ const Header = ({
                 }}
               >
                 <HStack>
-                  <Text fontFamily="GEORGEA Regular">High Scores</Text>
+                  <Text fontSize={'small'} fontFamily="GEORGEA Regular">
+                    High Scores
+                  </Text>
                   {loading.highScores ? (
                     <Spinner size="sm" color="blue.200" />
                   ) : (
@@ -200,9 +240,16 @@ const Header = ({
               </Tab>
 
               {score > 0 && (
-                <Tab ref={saveScoreFinalRef} onClick={onOpen}>
+                <Tab
+                  ref={saveScoreFinalRef}
+                  onClick={() => {
+                    setModalOpen({ saveScore: true });
+                  }}
+                >
                   <HStack>
-                    <Text fontFamily="GEORGEA Regular">Save Score</Text>
+                    <Text fontSize={'small'} fontFamily="GEORGEA Regular">
+                      Save Score
+                    </Text>
                     {loading.saveScore ? (
                       <Spinner size="sm" color="blue.200" />
                     ) : (
@@ -241,12 +288,22 @@ const Header = ({
         playerName={playerName}
         initialRef={saveScoreInitialRef}
         finalRef={saveScoreFinalRef}
-        isOpen={isOpen}
-        onClose={onClose}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
         isNotFullScreen={isNotFullScreen}
         setPlayerName={setPlayerName}
         score={score}
         handleSaveScore={handleSaveScore}
+      />
+
+      <ResetModal
+        background={bg}
+        initialRef={resetGameInitialRef}
+        finalRef={resetGameFinalRef}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        isNotFullScreen={isNotFullScreen}
+        resetStates={resetStates}
       />
     </Grid>
   );

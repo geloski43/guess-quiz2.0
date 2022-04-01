@@ -17,24 +17,28 @@ import {
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 
 const SaveScoreModal = ({
+  existingPlayerScore,
+  background,
+  playerName,
   initialRef,
   finalRef,
-  isOpen,
-  onClose,
+  modalOpen,
+  setModalOpen,
   isNotFullScreen,
   setPlayerName,
   score,
   handleSaveScore,
-  playerName,
-  background,
-  existingPlayerScore,
 }) => {
+  const { saveScore } = modalOpen;
+
   return (
     <Modal
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={saveScore}
+      onClose={() => {
+        setModalOpen({ saveScore: false });
+      }}
       motionPreset="slideInRight"
     >
       <ModalOverlay />
@@ -93,7 +97,7 @@ const SaveScoreModal = ({
             onClick={() => {
               handleSaveScore();
               setTimeout(() => {
-                onClose();
+                setModalOpen({ saveScore: false });
               }, 1500);
             }}
             colorScheme="blue"
@@ -101,7 +105,9 @@ const SaveScoreModal = ({
           >
             Save
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={() => setModalOpen({ saveScore: false })}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

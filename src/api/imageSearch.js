@@ -20,7 +20,7 @@ export const getImage3 = async query =>
       q: query,
       pageNumber: '1',
       pageSize: '10',
-      autoCorrect: 'true',
+      autoCorrect: 'false',
       safeSearch: 'false',
     },
     headers: {

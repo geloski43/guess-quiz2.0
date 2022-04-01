@@ -107,7 +107,9 @@ const GameSettingsDrawer = ({
             <Stack direction="row">
               {difficulties.map(d => (
                 <Radio key={d.id} value={d.name}>
-                  <Text fontSize="small">{d.name}</Text>
+                  <Text fontSize="small">
+                    {d.name[0].toUpperCase() + d.name.substring(1)}
+                  </Text>
                 </Radio>
               ))}
             </Stack>

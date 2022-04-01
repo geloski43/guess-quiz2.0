@@ -14,7 +14,7 @@ import {
   getQuestions,
   postLeaderBoard,
 } from './api/openTriviaApi';
-import { getImage, getImage2 } from './api/imageSearch';
+import { getImage, getImage2, getImage3 } from './api/imageSearch';
 import { categories } from './constants/gameSettings';
 import {
   successMessages,
@@ -169,13 +169,13 @@ const App = () => {
         .then(res => {
           // console.log('image', res.data.images_results);
           setImageHint(
-            res.data.images_results[Math.floor((Math.random() * 5) | 0)]
+            res.data.images_results[Math.floor((Math.random() * 2) | 0)]
               .thumbnail
           );
           localStorage.setItem(
             query,
             JSON.stringify(
-              res.data.images_results[Math.floor((Math.random() * 5) | 0)]
+              res.data.images_results[Math.floor((Math.random() * 2) | 0)]
                 .thumbnail
             )
           );
@@ -186,21 +186,38 @@ const App = () => {
             .then(res => {
               // console.log('image', res.data.images_results);
               setImageHint(
-                res.data.images_results[Math.floor((Math.random() * 5) | 0)]
+                res.data.images_results[Math.floor((Math.random() * 2) | 0)]
                   .thumbnail
               );
               localStorage.setItem(
                 query,
                 JSON.stringify(
-                  res.data.images_results[Math.floor((Math.random() * 5) | 0)]
+                  res.data.images_results[Math.floor((Math.random() * 2) | 0)]
                     .thumbnail
                 )
               );
             })
             .catch(err => {
-              setImageHint(
-                'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
-              );
+              getImage3(query)
+                .then(res => {
+                  console.log(res.data.value);
+                  setImageHint(
+                    res.data.value[Math.floor((Math.random() * 2) | 0)]
+                      .thumbnail
+                  );
+                  localStorage.setItem(
+                    query,
+                    JSON.stringify(
+                      res.data.value[Math.floor((Math.random() * 2) | 0)]
+                        .thumbnail
+                    )
+                  );
+                })
+                .catch(err => {
+                  setImageHint(
+                    'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
+                  );
+                });
               // console.log(err);
             });
           // console.log(err);
@@ -236,6 +253,25 @@ const App = () => {
 
   const randomSuccessMessage = () =>
     successMessages[Math.floor(Math.random() * 6)].message;
+
+  const resetStates = () => {
+    setClearedIndex([]);
+    setRandomNums(ranNums);
+    resetGuessedLetters();
+    setInvalidGuess(0);
+    setInvalidLetters([]);
+    setQuestions([]);
+    setQuestionIndex(0);
+    setImageHint('');
+    setCurrent({
+      answer: '',
+      question: '',
+      category: currentCat && currentCat.name,
+      difficulty: apiVariables.difficulty,
+    });
+    scoreContext.clearScore();
+    localStorage.setItem('score', JSON.stringify(0));
+  };
 
   const gameFailOrSuccess = () => {
     // you guessed wrong 5 times
@@ -409,9 +445,8 @@ const App = () => {
         scoreContext.addScore(playerScore + (5 - invalidGuess * 4));
       }
     } else {
-      // localStorage.setItem('score', JSON.stringify(playerScore));
+      localStorage.setItem('score', JSON.stringify(playerScore));
       // console.log('Did not find all of', current.answer, 'in', guessedLetters);
-      // console.log("guessed", guessedLetters);
     }
   };
 
@@ -456,7 +491,8 @@ const App = () => {
   return (
     <Box>
       <Header
-        imageHint={imageHint}
+        resetStates={resetStates}
+        current={current}
         scoreLeaders={scoreLeaders}
         apiVariables={apiVariables}
         setApiVariables={setApiVariables}

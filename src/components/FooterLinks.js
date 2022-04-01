@@ -10,6 +10,7 @@ import {
 import * as React from 'react';
 import { SiGmail, SiGithub, SiLinkedin } from 'react-icons/si';
 import { motion } from 'framer-motion';
+import kapSmiley from '../assets/images/Kapitan Smiley.png';
 
 const FooterLinks = () => {
   return (
@@ -25,11 +26,11 @@ const FooterLinks = () => {
             <motion.div whileHover={{ opacity: 0.8 }}>
               <Link href="https://geloski-portfolio.vercel.app/" isExternal>
                 <Avatar
-                  bg="whiteAlpha.900"
+                  bg="orange.400"
                   mt="1"
                   size="sm"
-                  name="Geloski"
-                  src="https://robohash.org/Kapitan%20Smiley?set=set2;size=100x100"
+                  name="Gelo Gonzales"
+                  src={kapSmiley}
                 />
               </Link>
             </motion.div>
