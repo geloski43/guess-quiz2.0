@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Center, VStack, useToast } from '@chakra-ui/react';
+import { Box, Center, VStack, useToast, Text } from '@chakra-ui/react';
 import { decodeQuestion, decodeHtml, shuffle } from './utils/utils';
 import { initialValues } from './constants/initialValues';
 import Header from './components/header/Header';
@@ -179,63 +179,6 @@ const App = () => {
             'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
           );
         });
-      // getImage(query)
-      //   .then(res => {
-      //     // console.log('image', res.data.images_results);
-      //     setImageHint(
-      //       res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-      //         .thumbnail
-      //     );
-      //     localStorage.setItem(
-      //       query,
-      //       JSON.stringify(
-      //         res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-      //           .thumbnail
-      //       )
-      //     );
-      //   })
-      //   // fallback when 100 searches has been exhausted
-      //   .catch(err => {
-      //     getImage2(query)
-      //       .then(res => {
-      //         // console.log('image', res.data.images_results);
-      //         setImageHint(
-      //           res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-      //             .thumbnail
-      //         );
-      //         localStorage.setItem(
-      //           query,
-      //           JSON.stringify(
-      //             res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-      //               .thumbnail
-      //           )
-      //         );
-      //       })
-      //       .catch(err => {
-      //         getImage3(query)
-      //           .then(res => {
-      //             console.log(res.data.value);
-      //             setImageHint(
-      //               res.data.value[Math.floor((Math.random() * 2) | 0)]
-      //                 .thumbnail
-      //             );
-      //             localStorage.setItem(
-      //               query,
-      //               JSON.stringify(
-      //                 res.data.value[Math.floor((Math.random() * 2) | 0)]
-      //                   .thumbnail
-      //               )
-      //             );
-      //           })
-      //           .catch(err => {
-      //             setImageHint(
-      //               'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
-      //             );
-      //           });
-      //         // console.log(err);
-      //       });
-      //     // console.log(err);
-      //   });
     }
   };
 
@@ -301,12 +244,7 @@ const App = () => {
         if (questions.length === 1) {
           toast({
             position: 'top',
-            render: () =>
-              GameResultToast(
-                100,
-                '',
-                'Sorry! You end the game in a losing streak. Try Harder to beat the high score'
-              ),
+            render: () => GameResultToast(100, '', randomFailMessage()),
           });
           // console.log('last question wrong guess');
           setQuestionIndex(0);
@@ -325,7 +263,14 @@ const App = () => {
           // proceed to next question and set states base on next question index
           toast({
             position: 'top',
-            render: () => GameResultToast(100, '', randomFailMessage()),
+            render: () =>
+              GameResultToast(
+                100,
+                '',
+                `
+                Question: ${current.question && current.question}
+                Answer: ${current.answer && current.answer.join('')}`
+              ),
           });
           // console.log('next question wrong guess');
           let currentCategory = '';
@@ -367,7 +312,7 @@ const App = () => {
             )
           );
         }
-      }, 500);
+      }, 4500);
       // you correctly guessed the answer
     } else if (
       current.answer &&
@@ -504,6 +449,7 @@ const App = () => {
 
   return (
     <Box>
+      {/* <Text>{current.answer && current.answer.join('')}</Text> */}
       <Header
         resetStates={resetStates}
         current={current}
