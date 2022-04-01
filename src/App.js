@@ -165,63 +165,77 @@ const App = () => {
       thumbnail = JSON.parse(localStorage.getItem(query));
       setImageHint(thumbnail);
     } else {
-      getImage(query)
+      getImage3(query)
         .then(res => {
-          // console.log('image', res.data.images_results);
-          setImageHint(
-            res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-              .thumbnail
-          );
+          console.log(res.data.value);
+          setImageHint(res.data.value[0].thumbnail);
           localStorage.setItem(
             query,
-            JSON.stringify(
-              res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-                .thumbnail
-            )
+            JSON.stringify(res.data.value[0].thumbnail)
           );
         })
-        // fallback when 100 searches has been exhausted
         .catch(err => {
-          getImage2(query)
-            .then(res => {
-              // console.log('image', res.data.images_results);
-              setImageHint(
-                res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-                  .thumbnail
-              );
-              localStorage.setItem(
-                query,
-                JSON.stringify(
-                  res.data.images_results[Math.floor((Math.random() * 2) | 0)]
-                    .thumbnail
-                )
-              );
-            })
-            .catch(err => {
-              getImage3(query)
-                .then(res => {
-                  console.log(res.data.value);
-                  setImageHint(
-                    res.data.value[Math.floor((Math.random() * 2) | 0)]
-                      .thumbnail
-                  );
-                  localStorage.setItem(
-                    query,
-                    JSON.stringify(
-                      res.data.value[Math.floor((Math.random() * 2) | 0)]
-                        .thumbnail
-                    )
-                  );
-                })
-                .catch(err => {
-                  setImageHint(
-                    'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
-                  );
-                });
-              // console.log(err);
-            });
-          // console.log(err);
+          setImageHint(
+            'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
+          );
         });
+      // getImage(query)
+      //   .then(res => {
+      //     // console.log('image', res.data.images_results);
+      //     setImageHint(
+      //       res.data.images_results[Math.floor((Math.random() * 2) | 0)]
+      //         .thumbnail
+      //     );
+      //     localStorage.setItem(
+      //       query,
+      //       JSON.stringify(
+      //         res.data.images_results[Math.floor((Math.random() * 2) | 0)]
+      //           .thumbnail
+      //       )
+      //     );
+      //   })
+      //   // fallback when 100 searches has been exhausted
+      //   .catch(err => {
+      //     getImage2(query)
+      //       .then(res => {
+      //         // console.log('image', res.data.images_results);
+      //         setImageHint(
+      //           res.data.images_results[Math.floor((Math.random() * 2) | 0)]
+      //             .thumbnail
+      //         );
+      //         localStorage.setItem(
+      //           query,
+      //           JSON.stringify(
+      //             res.data.images_results[Math.floor((Math.random() * 2) | 0)]
+      //               .thumbnail
+      //           )
+      //         );
+      //       })
+      //       .catch(err => {
+      //         getImage3(query)
+      //           .then(res => {
+      //             console.log(res.data.value);
+      //             setImageHint(
+      //               res.data.value[Math.floor((Math.random() * 2) | 0)]
+      //                 .thumbnail
+      //             );
+      //             localStorage.setItem(
+      //               query,
+      //               JSON.stringify(
+      //                 res.data.value[Math.floor((Math.random() * 2) | 0)]
+      //                   .thumbnail
+      //               )
+      //             );
+      //           })
+      //           .catch(err => {
+      //             setImageHint(
+      //               'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image'
+      //             );
+      //           });
+      //         // console.log(err);
+      //       });
+      //     // console.log(err);
+      //   });
     }
   };
 
