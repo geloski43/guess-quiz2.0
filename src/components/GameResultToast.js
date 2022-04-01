@@ -23,14 +23,22 @@ const GameResultToast = (yValue, winText, failText) => {
     <motion.div className="toast-container" style={{ background }}>
       {failText && (
         <Box textAlign={'center'} pt="14" mx="5">
-          <Text color="blackAlpha.900" fontSize={'sm'}>
+          <Text
+            fontFamily={'GEORGEA Regular'}
+            color="blackAlpha.900"
+            fontSize={'sm'}
+          >
             {failText}
           </Text>
         </Box>
       )}
       {winText && (
         <Box pt="170px" mx="5" textAlign={'center'}>
-          <Text color="blackAlpha.900" fontSize={'sm'}>
+          <Text
+            fontFamily={'GEORGEA Regular'}
+            color="blackAlpha.900"
+            fontSize={'sm'}
+          >
             {winText}
           </Text>
         </Box>
