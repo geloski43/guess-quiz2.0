@@ -25,7 +25,7 @@ const GameResultToast = (yValue, winText, failText) => {
         <Box textAlign={'center'} pt="14" mx="5">
           <Text
             fontFamily={'GEORGEA Regular'}
-            color="blackAlpha.900"
+            color="orange.400"
             fontSize={'sm'}
           >
             {failText}

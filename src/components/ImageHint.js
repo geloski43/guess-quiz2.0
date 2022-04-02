@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import BackgroundImageOnLoad from 'background-image-on-load';
+import { Skeleton } from '@chakra-ui/react';
 
 const ImageHint = ({ imageHint, bgIsLoaded, setBgIsLoaded, clearedIndex }) => {
   const ImageDivContainer = styled.div`
@@ -42,32 +43,43 @@ const ImageHint = ({ imageHint, bgIsLoaded, setBgIsLoaded, clearedIndex }) => {
   const rows = Array.from(Array(5).keys());
 
   return (
-    <ImageDivContainer>
-      {rows.map((v, i) => (
-        <ImageDivBlocks key={i}>
-          {columns.map((val, indx) =>
-            indx === 0 ||
-            indx === 3 ||
-            clearedIndex.includes(i) ||
-            imageHint ===
-              'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image' ? (
-              <ImageDivBlock key={indx}></ImageDivBlock>
-            ) : (
-              <ImageDivBlockBlurred key={indx}></ImageDivBlockBlurred>
-            )
-          )}
-        </ImageDivBlocks>
-      ))}
+    <>
+      {bgIsLoaded ? (
+        <ImageDivContainer>
+          {rows.map((v, i) => (
+            <ImageDivBlocks key={i}>
+              {columns.map((val, indx) =>
+                indx === 0 ||
+                indx === 3 ||
+                clearedIndex.includes(i) ||
+                imageHint ===
+                  'https://via.placeholder.com/200x150/bbc2cc/FF0000/?text=No_Image' ? (
+                  <ImageDivBlock key={indx}></ImageDivBlock>
+                ) : (
+                  <ImageDivBlockBlurred key={indx}></ImageDivBlockBlurred>
+                )
+              )}
+            </ImageDivBlocks>
+          ))}
+        </ImageDivContainer>
+      ) : (
+        <Skeleton
+          startColor="orange.400"
+          endColor="purple.500"
+          height="250px"
+          width="200px"
+        />
+      )}
       <BackgroundImageOnLoad
         src={'https://unsplash.it/1200/310?random'}
         onLoadBg={() => {
           setTimeout(() => {
             setBgIsLoaded(true);
-          }, 2000);
+          }, 2500);
         }}
         onError={err => console.log('error', err)}
       />
-    </ImageDivContainer>
+    </>
   );
 };
 

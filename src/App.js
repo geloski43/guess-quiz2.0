@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Center, VStack, useToast, Text } from '@chakra-ui/react';
+import { Box, Center, VStack, useToast } from '@chakra-ui/react';
 import { decodeQuestion, decodeHtml, shuffle } from './utils/utils';
 import { initialValues } from './constants/initialValues';
 import Header from './components/header/Header';
@@ -38,10 +38,12 @@ const App = () => {
   );
   const [boxedLettersColor, setBoxedLettersColor] = useState('orange.400');
 
+  const [gameHasStarted, setGameHasStarted] = useState(false);
+
   //states used for open trivia api
   const [apiVariables, setApiVariables] = useState({
-    difficulty: 'easy',
-    category: 9,
+    difficulty: 'Any Difficulty',
+    category: 0,
     numOfQuestions: 5,
   });
 
@@ -80,6 +82,7 @@ const App = () => {
   );
 
   const fetchQUestions = () => {
+    setGameHasStarted(true);
     setLoading({ app: true });
     let currentAnswer = '';
     let curentQuestion = '';
@@ -167,7 +170,7 @@ const App = () => {
     } else {
       getImage3(query)
         .then(res => {
-          console.log(res.data.value);
+          // console.log(res.data.value);
           setImageHint(res.data.value[0].thumbnail);
           localStorage.setItem(
             query,
@@ -212,6 +215,8 @@ const App = () => {
     successMessages[Math.floor(Math.random() * 6)].message;
 
   const resetStates = () => {
+    setBgIsLoaded(false);
+    setGameHasStarted(false);
     setClearedIndex([]);
     setRandomNums(ranNums);
     resetGuessedLetters();
@@ -234,74 +239,77 @@ const App = () => {
     // you guessed wrong 5 times
     if (invalidGuess === 5) {
       // console.log('you failed');
+      setBgIsLoaded(false);
       setClearedIndex([]);
       setRandomNums(ranNums);
       resetGuessedLetters();
       setInvalidGuess(0);
       setInvalidLetters([]);
-      setTimeout(() => {
-        //if all questions are answered
-        if (questions.length === 1) {
-          toast({
-            position: 'top',
-            render: () => GameResultToast(100, '', randomFailMessage()),
-          });
-          // console.log('last question wrong guess');
-          setQuestionIndex(0);
-          setImageHint('');
-          setCurrent({
-            answer: '',
-            question: '',
-            category: currentCat && currentCat.name,
-            difficulty: apiVariables.difficulty,
-          });
-          setQuestions([]);
-          resetGuessedLetters();
-          setInvalidGuess(0);
-          setInvalidLetters([]);
-        } else {
-          // proceed to next question and set states base on next question index
-          toast({
-            position: 'top',
-            render: () =>
-              GameResultToast(
-                100,
-                '',
-                `
-                Question: ${current.question && current.question}
-                Answer: ${current.answer && current.answer.join('')}`
-              ),
-          });
-          // console.log('next question wrong guess');
-          let currentCategory = '';
-          let currentAnswer = '';
-          let currentQuestion = '';
-          let currentDifficulty = '';
-          let currentQuestionIndex = 0;
-          currentQuestionIndex = questionIndex !== 0 ? 0 : questionIndex + 1;
-          currentAnswer = decodeHtml(
-            questions[currentQuestionIndex] &&
-              questions[currentQuestionIndex].correct_answer
-          );
-          currentQuestion = decodeQuestion(
-            questions[currentQuestionIndex] &&
-              questions[currentQuestionIndex].question
-          );
-          currentCategory =
-            questions[currentQuestionIndex] &&
-            questions[currentQuestionIndex].category;
-          currentDifficulty =
-            questions[currentQuestionIndex] &&
-            questions[currentQuestionIndex].difficulty;
+
+      //if all questions are answered
+      if (questions.length === 1) {
+        toast({
+          position: 'top',
+          render: () => GameResultToast(100, '', randomFailMessage()),
+        });
+        // console.log('last question wrong guess');
+        setGameHasStarted(false);
+        setQuestionIndex(0);
+        setImageHint('');
+        setCurrent({
+          answer: '',
+          question: '',
+          category: currentCat && currentCat.name,
+          difficulty: apiVariables.difficulty,
+        });
+        setQuestions([]);
+        resetGuessedLetters();
+        setInvalidGuess(0);
+        setInvalidLetters([]);
+      } else {
+        // proceed to next question and set states base on next question index
+        toast({
+          position: 'top',
+          render: () =>
+            GameResultToast(
+              100,
+              '',
+              `
+              Question: ${current.question && current.question}
+              Answer: ${current.answer && current.answer.join('')}`
+            ),
+        });
+        // console.log('next question wrong guess');
+        let currentCategory = '';
+        let currentAnswer = '';
+        let currentQuestion = '';
+        let currentDifficulty = '';
+        let currentQuestionIndex = 0;
+        currentQuestionIndex = questionIndex !== 0 ? 0 : questionIndex + 1;
+        currentAnswer = decodeHtml(
+          questions[currentQuestionIndex] &&
+            questions[currentQuestionIndex].correct_answer
+        );
+        currentQuestion = decodeQuestion(
+          questions[currentQuestionIndex] &&
+            questions[currentQuestionIndex].question
+        );
+        currentCategory =
+          questions[currentQuestionIndex] &&
+          questions[currentQuestionIndex].category;
+        currentDifficulty =
+          questions[currentQuestionIndex] &&
+          questions[currentQuestionIndex].difficulty;
+        // fetch image hint base on the question
+        fetchImage(currentQuestion);
+        // filter the previous question and proceed
+        setTimeout(() => {
           setCurrent({
             answer: currentAnswer,
             question: currentQuestion,
             category: currentCategory,
             difficulty: currentDifficulty,
           });
-          // fetch image hint base on the question
-          fetchImage(currentQuestion);
-          // filter the previous question and proceed
           setQuestions(
             questions.filter(
               c =>
@@ -311,8 +319,8 @@ const App = () => {
                 ].correct_answer
             )
           );
-        }
-      }, 4500);
+        }, 4500);
+      }
       // you correctly guessed the answer
     } else if (
       current.answer &&
@@ -329,6 +337,7 @@ const App = () => {
               ''
             ),
         });
+        setGameHasStarted(false);
         setCurrent({
           answer: '',
           question: '',
@@ -376,18 +385,17 @@ const App = () => {
           difficulty: currentDifficulty,
         });
         fetchImage(currentQuestion);
-        setTimeout(() => {
-          setQuestions(
-            questions.filter(
-              c =>
-                c.correct_answer !==
-                questions[
-                  questionIndex === 0 ? currentQuestionIndex - 1 : questionIndex
-                ].correct_answer
-            )
-          );
-        }, 500);
+        setQuestions(
+          questions.filter(
+            c =>
+              c.correct_answer !==
+              questions[
+                questionIndex === 0 ? currentQuestionIndex - 1 : questionIndex
+              ].correct_answer
+          )
+        );
       }
+      setBgIsLoaded(false);
       setQuestionIndex(0);
       resetGuessedLetters();
       setInvalidGuess(0);
@@ -395,13 +403,13 @@ const App = () => {
       setClearedIndex([]);
       setRandomNums(ranNums);
       if (current.difficulty === 'easy') {
-        scoreContext.addScore(playerScore + (5 - invalidGuess * 1));
+        scoreContext.addScore(playerScore + (5 - invalidGuess) * 1);
       }
       if (current.difficulty === 'medium') {
-        scoreContext.addScore(playerScore + (5 - invalidGuess * 2));
+        scoreContext.addScore(playerScore + (5 - invalidGuess) * 2);
       }
       if (current.difficulty === 'hard') {
-        scoreContext.addScore(playerScore + (5 - invalidGuess * 4));
+        scoreContext.addScore(playerScore + (5 - invalidGuess) * 4);
       }
     } else {
       localStorage.setItem('score', JSON.stringify(playerScore));
@@ -449,7 +457,6 @@ const App = () => {
 
   return (
     <Box>
-      {/* <Text>{current.answer && current.answer.join('')}</Text> */}
       <Header
         resetStates={resetStates}
         current={current}
@@ -466,7 +473,7 @@ const App = () => {
       <DivContainer>
         {!loading.app ? (
           <>
-            {imageHint && !loading.app ? (
+            {imageHint || gameHasStarted ? (
               <Center p="2">
                 <VStack>
                   <ImageHint
