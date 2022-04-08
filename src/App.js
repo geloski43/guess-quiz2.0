@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Center, VStack, useToast, Button } from '@chakra-ui/react';
+import { Box, Center, VStack, useToast } from '@chakra-ui/react';
 import { decodeQuestion, decodeHtml, shuffle } from './utils/utils';
 import { initialValues } from './constants/initialValues';
 import Header from './components/header/Header';
@@ -456,12 +456,6 @@ const App = () => {
 
   return (
     <Box>
-      <Button onClick={() => {
-        toast({
-          position: 'top',
-          render: () => GameResultToast(-100, randomSuccessMessage(), ''),
-        });
-      }}>gg</Button>
       <Header
         resetStates={resetStates}
         current={current}
