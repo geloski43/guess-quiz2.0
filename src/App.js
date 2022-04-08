@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Center, VStack, useToast } from '@chakra-ui/react';
+import { Box, Center, VStack, useToast, Button } from '@chakra-ui/react';
 import { decodeQuestion, decodeHtml, shuffle } from './utils/utils';
 import { initialValues } from './constants/initialValues';
 import Header from './components/header/Header';
@@ -110,11 +110,11 @@ const App = () => {
           setQuestions(res.data.results);
           curentQuestion = decodeQuestion(
             res.data.results[questionIndex] &&
-              res.data.results[questionIndex].question
+            res.data.results[questionIndex].question
           );
           currentAnswer = decodeHtml(
             res.data.results[questionIndex] &&
-              res.data.results[questionIndex].correct_answer
+            res.data.results[questionIndex].correct_answer
           );
           currentCategory =
             res.data.results[questionIndex] &&
@@ -189,9 +189,8 @@ const App = () => {
     if (existingPlayerScore) {
       toast({
         position: 'top-right',
-        title: `Player ${
-          existingPlayerScore && existingPlayerScore.name
-        } already exists, please select other name.`,
+        title: `Player ${existingPlayerScore && existingPlayerScore.name
+          } already exists, please select other name.`,
         status: 'warning',
         isClosable: true,
       });
@@ -288,11 +287,11 @@ const App = () => {
         currentQuestionIndex = questionIndex !== 0 ? 0 : questionIndex + 1;
         currentAnswer = decodeHtml(
           questions[currentQuestionIndex] &&
-            questions[currentQuestionIndex].correct_answer
+          questions[currentQuestionIndex].correct_answer
         );
         currentQuestion = decodeQuestion(
           questions[currentQuestionIndex] &&
-            questions[currentQuestionIndex].question
+          questions[currentQuestionIndex].question
         );
         currentCategory =
           questions[currentQuestionIndex] &&
@@ -366,11 +365,11 @@ const App = () => {
         currentQuestionIndex = questionIndex !== 0 ? 0 : questionIndex + 1;
         currentAnswer = decodeHtml(
           questions[currentQuestionIndex] &&
-            questions[currentQuestionIndex].correct_answer
+          questions[currentQuestionIndex].correct_answer
         );
         currentQuestion = decodeQuestion(
           questions[currentQuestionIndex] &&
-            questions[currentQuestionIndex].question
+          questions[currentQuestionIndex].question
         );
         currentCategory =
           questions[currentQuestionIndex] &&
@@ -457,6 +456,12 @@ const App = () => {
 
   return (
     <Box>
+      <Button onClick={() => {
+        toast({
+          position: 'top',
+          render: () => GameResultToast(-100, randomSuccessMessage(), ''),
+        });
+      }}>gg</Button>
       <Header
         resetStates={resetStates}
         current={current}

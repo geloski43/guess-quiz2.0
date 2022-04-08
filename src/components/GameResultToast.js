@@ -33,7 +33,7 @@ const GameResultToast = (yValue, winText, failText) => {
         </Box>
       )}
       {winText && (
-        <Box pt="170px" mx="5" textAlign={'center'}>
+        <Box pt="250px" mx="5" textAlign={'center'}>
           <Text
             fontFamily={'GEORGEA Regular'}
             color="blackAlpha.900"
